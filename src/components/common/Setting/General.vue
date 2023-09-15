@@ -64,6 +64,8 @@ const languageOptions: { label: string; key: Language; value: Language }[] = [
 	{label: 'Русский язык', key: 'ru-RU', value: 'ru-RU'},
 ]
 
+const emit = defineEmits(['update:visible'])
+
 function updateUserInfo(options: Partial<UserInfo>) {
 	userStore.updateUserInfo(options)
 	ms.success(t('common.success'))
@@ -71,6 +73,7 @@ function updateUserInfo(options: Partial<UserInfo>) {
 
 function updateAccessToken(accessToken: string) {
 	fetchAccessToken(accessToken).then(res => {
+		emit('update:visible', false)
 		ms.success(t('common.success'))
 	})
 }

@@ -1,18 +1,19 @@
 <script setup lang='ts'>
-import { computed, ref } from 'vue'
-import { NModal, NTabPane, NTabs } from 'naive-ui'
+import {computed, ref} from 'vue'
+import {NModal, NTabPane, NTabs} from 'naive-ui'
 import General from './General.vue'
 import Advanced from './Advanced.vue'
 import About from './About.vue'
-import { useAuthStore } from '@/store'
-import { SvgIcon } from '@/components/common'
+import Login from './Login.vue'
+import {useAuthStore} from '@/store'
+import {SvgIcon} from '@/components/common'
 
 interface Props {
-  visible: boolean
+	visible: boolean
 }
 
 interface Emit {
-  (e: 'update:visible', visible: boolean): void
+	(e: 'update:visible', visible: boolean): void
 }
 
 const props = defineProps<Props>()
@@ -26,13 +27,17 @@ const isChatGPTAPI = computed<boolean>(() => !!authStore.isChatGPTAPI)
 const active = ref('General')
 
 const show = computed({
-  get() {
-    return props.visible
-  },
-  set(visible: boolean) {
-    emit('update:visible', visible)
-  },
+	get() {
+		return props.visible
+	},
+	set(visible: boolean) {
+		emit('update:visible', visible)
+	},
 })
+
+const updateShow = (val: boolean) => {
+	show.value = val
+}
 </script>
 
 <template>
@@ -45,7 +50,7 @@ const show = computed({
             <span class="ml-2">{{ $t('setting.general') }}</span>
           </template>
           <div class="min-h-[100px]">
-            <General />
+						<General @update:visible="updateShow"/>
           </div>
         </NTabPane>
         <NTabPane v-if="isChatGPTAPI" name="Advanced" tab="Advanced">
@@ -54,17 +59,24 @@ const show = computed({
             <span class="ml-2">{{ $t('setting.advanced') }}</span>
           </template>
           <div class="min-h-[100px]">
-            <Advanced />
-          </div>
-        </NTabPane>
-        <NTabPane name="Config" tab="Config">
-          <template #tab>
-            <SvgIcon class="text-lg" icon="ri:list-settings-line" />
-            <span class="ml-2">{{ $t('setting.config') }}</span>
-          </template>
-          <About />
-        </NTabPane>
-      </NTabs>
+						<Advanced/>
+					</div>
+				</NTabPane>
+				<NTabPane name="Config" tab="Config">
+					<template #tab>
+						<SvgIcon class="text-lg" icon="ri:list-settings-line"/>
+						<span class="ml-2">{{ $t('setting.config') }}</span>
+					</template>
+					<About/>
+				</NTabPane>
+				<NTabPane name="Login" tab="Login">
+					<template #tab>
+						<SvgIcon class="text-lg" icon="ri:list-settings-line"/>
+						<span class="ml-2">获取AccessToken</span>
+					</template>
+					<Login @update:visible="updateShow"/>
+				</NTabPane>
+			</NTabs>
     </div>
   </NModal>
 </template>

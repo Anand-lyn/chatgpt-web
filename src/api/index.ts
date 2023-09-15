@@ -11,50 +11,51 @@ export function fetchChatAPI<T = any>(
 		url: '/chat',
 		data: {prompt, options},
 		signal,
-  })
+	})
 }
 
 export function fetchChatConfig<T = any>() {
-  return post<T>({
-    url: '/config',
-  })
+	return post<T>({
+		url: '/config',
+	})
 }
 
 export function fetchChatAPIProcess<T = any>(
-  params: {
-    prompt: string
-    options?: { conversationId?: string; parentMessageId?: string }
-    signal?: GenericAbortSignal
-    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void },
+	params: {
+		prompt: string
+		options?: { conversationId?: string; parentMessageId?: string }
+		signal?: GenericAbortSignal
+		onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void
+	},
 ) {
-  const settingStore = useSettingStore()
-  const authStore = useAuthStore()
+	const settingStore = useSettingStore()
+	const authStore = useAuthStore()
 
-  let data: Record<string, any> = {
-    prompt: params.prompt,
-    options: params.options,
-  }
+	let data: Record<string, any> = {
+		prompt: params.prompt,
+		options: params.options,
+	}
 
-  if (authStore.isChatGPTAPI) {
-    data = {
-      ...data,
-      systemMessage: settingStore.systemMessage,
-      temperature: settingStore.temperature,
-      top_p: settingStore.top_p,
-    }
-  }
+	if (authStore.isChatGPTAPI) {
+		data = {
+			...data,
+			systemMessage: settingStore.systemMessage,
+			temperature: settingStore.temperature,
+			top_p: settingStore.top_p,
+		}
+	}
 
-  return post<T>({
-    url: '/chat-process',
-    data,
-    signal: params.signal,
-    onDownloadProgress: params.onDownloadProgress,
-  })
+	return post<T>({
+		url: '/chat-process',
+		data,
+		signal: params.signal,
+		onDownloadProgress: params.onDownloadProgress,
+	})
 }
 
 export function fetchSession<T>() {
-  return post<T>({
-    url: '/session',
+	return post<T>({
+		url: '/session',
 	})
 }
 
@@ -69,5 +70,12 @@ export function fetchAccessToken<T>(accessToken: string) {
 	return post<T>({
 		url: '/updateAccessToken',
 		data: {accessToken},
+	})
+}
+
+export function getAccessToken<T>(body: object) {
+	return post<T>({
+		url: '/getAccessToken',
+		data: body,
 	})
 }

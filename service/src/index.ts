@@ -6,6 +6,7 @@ import {auth} from './middleware/auth'
 import {limiter} from './middleware/limiter'
 import {isNotEmptyString} from './utils/is'
 import VariableHolder from './utils/globalVar'
+import axios from 'axios'
 
 const app = express()
 const router = express.Router()
@@ -55,6 +56,23 @@ router.post('/updateAccessToken', auth, async (req, res) => {
 	} catch (error) {
 		res.send({status: 'Fail', message: error.message, data: null})
 	}
+})
+
+router.post('/getAccessToken', auth, async (req, res) => {
+
+	const {username, password, mfa_code} = req.body;
+	if (!username || !password) {
+		res.send({status: 'Fail', message: '账号密码不能为空', data: null})
+		return
+	}
+	axios.postForm('https://ai.fakeopen.com/auth/login', {...req.body})
+		.then(response => {
+			const data = response.data;
+			VariableHolder.set('accessToken', data.access_token)
+			res.send({status: 'Success', message: 'success', data})
+		}).catch(err => {
+		res.send({status: 'Fail', message: err.response.data.detail, data: null})
+	})
 })
 
 router.post('/config', auth, async (req, res) => {
